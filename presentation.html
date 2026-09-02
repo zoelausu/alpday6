@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Henry Fong — Executive Career Portfolio</title>
+
+    <!-- Google Fonts: Source Serif 4 (Headings), DM Sans (Body), IBM Plex Mono (Metadata & Chrome) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (SIGNAL THEME)
+           =========================================== */
+        :root {
+            /* Surface & Palette */
+            --navy: #1C2644;
+            --navy-deep: #131b31;
+            --navy-alt: #232F55;
+            --cream: #F0ECE3;
+            --cream-alt: #E6E0D4;
+            --cream-card: #e5decb;
+            --gold: #C8A870;
+            --gold-muted: rgba(200, 168, 112, 0.25);
+            
+            /* Text colors */
+            --text-warm: #E2DCD0;
+            --text-muted-dark: #8A96A8;
+            --text-hint-dark: #4E5A6E;
+            --ink: #1A2030;
+            --text-muted-light: #5A6270;
+            --text-hint-light: #8E95A2;
+
+            /* Borders */
+            --border-dark: #2E3D5C;
+            --border-light: #CAC4B4;
+
+            /* Typography */
+            --font-serif: 'Source Serif 4', Georgia, serif;
+            --font-sans: 'DM Sans', system-ui, sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+
+            /* Animation */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.65s;
+        }
+
+        /* ===========================================
+           MANDATORY FIXED 16:9 STAGE (viewport-base.css)
+           =========================================== */
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #0b0f1a;
+            color: var(--text-warm);
+        }
+
+        .deck-viewport {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            background: #0b0f1a;
+        }
+
+        .deck-stage {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            transform-origin: 0 0;
+            background: var(--navy);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 75px 130px;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .slide.active,
+        .slide.visible {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 1;
+        }
+
+        /* Dark slide background + 80px fingerprint grid */
+        .slide.dark {
+            background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+            color: var(--text-warm);
+        }
+
+        .slide.dark::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 80px 80px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Cream slide background (Editorial paper surface) */
+        .slide.light {
+            background: var(--cream);
+            color: var(--ink);
+        }
+
+        /* Keep slide children above background pseudo-elements */
+        .slide > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===========================================
+           CHROME AND FRAMING
+           =========================================== */
+        .chrome-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border-dark);
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .slide.dark .chrome-top {
+            border-bottom-color: var(--border-dark);
+            color: var(--gold);
+        }
+
+        .slide.light .chrome-top {
+            border-bottom-color: var(--border-light);
+            color: var(--ink);
+        }
+
+        .chrome-top .sec-id {
+            color: var(--gold);
+        }
+
+        .chrome-foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 18px;
+            border-top: 1px solid var(--border-dark);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .slide.dark .chrome-foot {
+            border-top-color: var(--border-dark);
+            color: var(--text-hint-dark);
+        }
+
+        .slide.light .chrome-foot {
+            border-top-color: var(--border-light);
+            color: var(--text-muted-light);
+        }
+
+        /* ===========================================
+           TYPOGRAPHY & SIGNATURE TREATMENTS
+           =========================================== */
+        .kicker {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .gold-rule-short {
+            display: inline-block;
+            width: 36px;
+            height: 1px;
+            background: var(--gold);
+        }
+
+        h1.hero-display {
+            font-family: var(--font-serif);
+            font-size: 92px;
+            font-weight: 600;
+            line-height: 1.04;
+            letter-spacing: -0.02em;
+            color: var(--text-warm);
+            margin-bottom: 22px;
+            max-width: 1500px;
+        }
+
+        h1.hero-display em,
+        h2.slide-h2 em,
+        h3.block-h3 em {
+            font-family: var(--font-serif);
+            font-style: italic;
+            color: var(--gold);
+            font-weight: 400;
+        }
+
+        h2.slide-h2 {
+            font-family: var(--font-serif);
+            font-size: 50px;
+            font-weight: 600;
+            line-height: 1.16;
+            letter-spacing: -0.01em;
+            margin-bottom: 16px;
+            max-width: 1400px;
+        }
+
+        .slide.dark h2.slide-h2 {
+            color: var(--text-warm);
+        }
+
+        .slide.light h2.slide-h2 {
+            color: var(--ink);
+        }
+
+        p.lead-p {
+            font-family: var(--font-sans);
+            font-size: 24px;
+            line-height: 1.55;
+            max-width: 1300px;
+            margin-bottom: 26px;
+        }
+
+        .slide.dark p.lead-p {
+            color: var(--text-muted-dark);
+        }
+
+        .slide.light p.lead-p {
+            color: var(--text-muted-light);
+        }
+
+        p.lead-p em {
+            font-family: var(--font-serif);
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        /* ===========================================
+           COMPONENTS & GRIDS
+           =========================================== */
+        .grid-3-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 44px;
+            margin-top: 10px;
+        }
+
+        .grid-4-col {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            margin-top: 10px;
+        }
+
+        .editorial-col {
+            border-top: 1px solid var(--border-dark);
+            padding-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .slide.light .editorial-col {
+            border-top-color: var(--border-light);
+        }
+
+        .col-index {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .col-title {
+            font-family: var(--font-serif);
+            font-size: 26px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        .slide.dark .col-title { color: var(--text-warm); }
+        .slide.light .col-title { color: var(--ink); }
+
+        .col-desc {
+            font-family: var(--font-sans);
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .slide.dark .col-desc { color: var(--text-muted-dark); }
+        .slide.light .col-desc { color: var(--text-muted-light); }
+
+        /* Timeline block */
+        .timeline-card {
+            border-top: 1px solid var(--border-dark);
+            padding: 22px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .timeline-role {
+            font-family: var(--font-serif);
+            font-size: 23px;
+            font-weight: 600;
+            color: var(--text-warm);
+        }
+
+        .timeline-org {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--gold);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* Overview Stat Banner */
+        .stat-banner {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            border-top: 1px solid var(--border-dark);
+            padding-top: 32px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-family: var(--font-serif);
+            font-size: 56px;
+            font-weight: 600;
+            color: var(--gold);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-heading {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-warm);
+        }
+
+        .stat-sub {
+            font-family: var(--font-sans);
+            font-size: 15px;
+            color: var(--text-muted-dark);
+            line-height: 1.4;
+        }
+
+        /* 2-Column Split for Slide 4 */
+        .split-2-col {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 48px;
+            margin-top: 10px;
+        }
+
+        .capabilities-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .capability-row {
+            border-top: 1px solid var(--border-light);
+            padding-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .cap-title {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .cap-desc {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            line-height: 1.55;
+            color: var(--text-muted-light);
+        }
+
+        .contact-card-box {
+            background: var(--cream-alt);
+            border: 1px solid var(--border-light);
+            padding: 36px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 16px;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .contact-kicker {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--gold);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .contact-val {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            color: var(--ink);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .contact-val a {
+            color: var(--ink);
+            text-decoration: none;
+            border-bottom: 1px solid var(--gold);
+        }
+
+        .contact-val a:hover {
+            color: var(--gold);
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal:nth-child(1) { transition-delay: 0.1s; }
+        .reveal:nth-child(2) { transition-delay: 0.22s; }
+        .reveal:nth-child(3) { transition-delay: 0.35s; }
+        .reveal:nth-child(4) { transition-delay: 0.48s; }
+        .reveal:nth-child(5) { transition-delay: 0.6s; }
+
+        /* ===========================================
+           NAVIGATION CONTROLS
+           =========================================== */
+        .deck-controls {
+            position: fixed;
+            bottom: 24px;
+            right: 40px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(19, 27, 49, 0.9);
+            border: 1px solid var(--border-dark);
+            padding: 6px 16px;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-warm);
+            font-family: var(--font-mono);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: color 0.2s;
+        }
+
+        .nav-btn:hover {
+            color: var(--gold);
+        }
+
+        .slide-counter {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--gold);
+            letter-spacing: 0.1em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* ===========================================
+           INLINE EDITING UI
+           =========================================== */
+        .edit-hotzone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 80px;
+            z-index: 10000;
+            cursor: pointer;
+        }
+
+        .edit-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--navy-deep);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10001;
+            cursor: pointer;
+        }
+
+        .edit-toggle.show,
+        .edit-toggle.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        [contenteditable="true"] {
+            outline: 2px dashed var(--gold);
+            outline-offset: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="Toggle Edit Mode (Press E)">✎</button>
+
+    <div class="deck-viewport">
+        <main class="deck-stage" id="deckStage">
+            
+            <!-- SLIDE 1: Cover & Executive Profile (Dark Navy, Chromeless) -->
+            <section class="slide dark active">
+                <div class="kicker reveal">
+                    <span class="gold-rule-short"></span>
+                    <span>Executive Dossier &bull; Hong Kong SAR</span>
+                </div>
+
+                <div class="reveal">
+                    <h1 class="hero-display">Henry Fong —<br><em>CRM &amp; Digital Transformation Leader</em></h1>
+                    <p class="lead-p">Over two decades orchestrating customer ecosystems, composable CRM architectures, and agentic AI systems for premier retail and cultural institutions.</p>
+                </div>
+
+                <div class="stat-banner reveal">
+                    <div class="stat-item">
+                        <span class="stat-value">20+ Yrs</span>
+                        <span class="stat-heading">Executive Leadership</span>
+                        <span class="stat-sub">eCommerce, CRM &amp; Omnichannel transformation across Greater China</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">WestK</span>
+                        <span class="stat-heading">Head of CRM</span>
+                        <span class="stat-sub">Leading audience lifecycle &amp; data modernization for Asia's landmark cultural district</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">HKUST</span>
+                        <span class="stat-heading">Business School</span>
+                        <span class="stat-sub">Rigorous analytical discipline &amp; commercial strategy foundation</span>
+                    </div>
+                </div>
+
+                <div class="reveal" style="border-top: 1px solid var(--border-dark); padding-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-family: var(--font-mono); font-size: 14px; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase;">
+                        WestK &bull; Chow Tai Fook &bull; Havaianas China &bull; CLP
+                    </div>
+                    <div style="font-family: var(--font-mono); font-size: 13px; color: var(--text-hint-dark); letter-spacing: 0.1em;">
+                        [ARROW KEYS / SPACE] TO NAVIGATE &bull; [E] TO EDIT
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: Strategic Vision & 2026 Shift (Light Cream) -->
+            <section class="slide light">
+                <div class="chrome-top">
+                    <span><span class="sec-id">01 /</span> Strategic Vision</span>
+                    <span>02 / 04</span>
+                </div>
+
+                <div>
+                    <div class="kicker reveal">
+                        <span class="gold-rule-short"></span>
+                        <span>The 2026 Shift</span>
+                    </div>
+                    <h2 class="slide-h2 reveal">Moving from passive systems of record to <em>autonomous systems of action</em>.</h2>
+                    <p class="lead-p reveal">Customer relationship management is undergoing a structural paradigm shift. Sustainable growth requires connecting fragmented touchpoints into proactive intelligence engines.</p>
+                    
+                    <div class="grid-3-col reveal">
+                        <div class="editorial-col">
+                            <span class="col-index">01 / Autonomy</span>
+                            <h3 class="col-title">Agentic AI Workflows</h3>
+                            <p class="col-desc">Transitioning from predictive prompts to autonomous execution—routing complex inquiries, triggering cross-functional operations, and freeing human capital for high-value engagement.</p>
+                        </div>
+                        <div class="editorial-col">
+                            <span class="col-index">02 / Agility</span>
+                            <h3 class="col-title">Composable Architecture</h3>
+                            <p class="col-desc">Replacing rigid monolithic suites with modular iPaaS data pipelines that unify ERPs, CDPs (MS Dynamics 365), and ticketing/commerce touchpoints in real time.</p>
+                        </div>
+                        <div class="editorial-col">
+                            <span class="col-index">03 / Accountability</span>
+                            <h3 class="col-title">Outcome-Based Metrics</h3>
+                            <p class="col-desc">Retiring shallow vanity tracking in favor of high-impact commercial indicators: first-contact resolution rates, customer lifetime value, and end-to-end deal velocity.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chrome-foot">
+                    <span>Enterprise Architecture &amp; Methodology</span>
+                    <span>Executive Strategy</span>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: Career Track Record (Dark Navy) -->
+            <section class="slide dark">
+                <div class="chrome-top">
+                    <span><span class="sec-id">02 /</span> Executive Track Record</span>
+                    <span>03 / 04</span>
+                </div>
+
+                <div>
+                    <div class="kicker reveal">
+                        <span class="gold-rule-short"></span>
+                        <span>Proven Track Record</span>
+                    </div>
+                    <h2 class="slide-h2 reveal">Two decades of driving <em>omnichannel growth, eCommerce &amp; CRM</em>.</h2>
+                    <p class="lead-p reveal">A consistent record of building high-performing digital teams, scaling multi-market retail operations, and deploying modern customer platforms.</p>
+
+                    <div class="grid-4-col reveal">
+                        <div class="timeline-card">
+                            <span class="timeline-org">Current Role</span>
+                            <h3 class="timeline-role">Head of CRM</h3>
+                            <p style="font-family: var(--font-sans); font-size: 15px; color: var(--gold); margin-bottom: 6px;">West Kowloon Cultural District</p>
+                            <p class="col-desc">Leading end-to-end CRM modernization, ticketing lifecycle journeys, audience segmentation, and data governance for Asia's landmark cultural authority.</p>
+                        </div>
+                        <div class="timeline-card">
+                            <span class="timeline-org">Luxury Retail</span>
+                            <h3 class="timeline-role">Director of eCommerce</h3>
+                            <p style="font-family: var(--font-sans); font-size: 15px; color: var(--gold); margin-bottom: 6px;">Chow Tai Fook Jewellery</p>
+                            <p class="col-desc">Spearheaded digital commerce strategies, marketplace operations, and high-value omnichannel retail integrations across key Asian markets.</p>
+                        </div>
+                        <div class="timeline-card">
+                            <span class="timeline-org">Energy &amp; Services</span>
+                            <h3 class="timeline-role">Marketing Lead</h3>
+                            <p style="font-family: var(--font-sans); font-size: 15px; color: var(--gold); margin-bottom: 6px;">CLP (CLPe Commerce)</p>
+                            <p class="col-desc">Scaled customer marketing campaigns, commercial loyalty initiatives, and innovative eCommerce solutions for Hong Kong's primary energy provider.</p>
+                        </div>
+                        <div class="timeline-card">
+                            <span class="timeline-org">Global Fashion</span>
+                            <h3 class="timeline-role">Head of eCommerce</h3>
+                            <p style="font-family: var(--font-sans); font-size: 15px; color: var(--gold); margin-bottom: 6px;">Havaianas (Alpargatas China)</p>
+                            <p class="col-desc">Established China digital infrastructure from ground up, steering Tmall/JD flagship channels, brand marketing, and DTC fulfillment operations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chrome-foot">
+                    <span>Executive Leadership Experience</span>
+                    <span>Hong Kong SAR</span>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: Core Capabilities & Connect (Light Cream) -->
+            <section class="slide light">
+                <div class="chrome-top">
+                    <span><span class="sec-id">03 /</span> Capabilities &amp; Contact</span>
+                    <span>04 / 04</span>
+                </div>
+
+                <div>
+                    <div class="kicker reveal">
+                        <span class="gold-rule-short"></span>
+                        <span>Executive Toolkit &amp; Collaboration</span>
+                    </div>
+                    <h2 class="slide-h2 reveal">A multidisciplinary bridge between <em>technology, operations &amp; growth</em>.</h2>
+                    
+                    <div class="split-2-col reveal">
+                        <!-- Left: 3 Core Competency Domains -->
+                        <div class="capabilities-list">
+                            <div class="capability-row">
+                                <span class="col-index">Domain 01 / CRM &amp; Customer Platforms</span>
+                                <h4 class="cap-title">Enterprise CRM &amp; Data Governance</h4>
+                                <p class="cap-desc">Microsoft Dynamics 365 implementation, automated multi-channel campaign orchestration, audience segmentation, retention modeling, and data sanity.</p>
+                            </div>
+                            <div class="capability-row">
+                                <span class="col-index">Domain 02 / Omnichannel Commerce</span>
+                                <h4 class="cap-title">Digital Retail &amp; DTC Scaling</h4>
+                                <p class="cap-desc">Direct-to-Consumer store buildouts, Tmall &amp; JD marketplace management, ticketing ecosystem modernization, and conversion rate optimization.</p>
+                            </div>
+                            <div class="capability-row">
+                                <span class="col-index">Domain 03 / Agentic AI &amp; Innovation</span>
+                                <h4 class="cap-title">Autonomous AI &amp; Composable Systems</h4>
+                                <p class="cap-desc">Deploying reviewable AI agents in customer workflows, iPaaS integration connecting legacy ERPs, and zero-code AI enablement across business units.</p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Executive Contact & Credentials Card -->
+                        <div class="contact-card-box">
+                            <div>
+                                <span class="col-index" style="margin-bottom: 12px; display: block;">Open for Engagement</span>
+                                <h3 style="font-family: var(--font-serif); font-size: 26px; font-weight: 600; color: var(--ink); line-height: 1.25; margin-bottom: 12px;">
+                                    Executive Leadership &bull; Advisory &bull; Transformation
+                                </h3>
+                                <p style="font-family: var(--font-sans); font-size: 15px; color: var(--text-muted-light); line-height: 1.5;">
+                                    Available for leadership discussions in CRM modernization, digital retail growth, and enterprise AI transformation.
+                                </p>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 14px;">
+                                <div class="contact-item">
+                                    <span class="contact-kicker">LinkedIn Profile</span>
+                                    <span class="contact-val">
+                                        <a href="https://hk.linkedin.com/in/henry-fong-23231637" target="_blank">
+                                            linkedin.com/in/henry-fong-23231637 &UpperRightArrow;
+                                        </a>
+                                    </span>
+                                </div>
+                                <div class="contact-item">
+                                    <span class="contact-kicker">Location</span>
+                                    <span class="contact-val">Hong Kong SAR</span>
+                                </div>
+                                <div class="contact-item">
+                                    <span class="contact-kicker">Education &amp; Network</span>
+                                    <span class="contact-val">HKUST Business School</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chrome-foot">
+                    <span>Henry Fong &bull; Executive Career Portfolio</span>
+                    <span>Ready for Delivery</span>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="deck-controls">
+        <button class="nav-btn" id="prevBtn" title="Previous Slide (Left Arrow)">◀</button>
+        <div class="slide-counter" id="slideCounter">1 / 4</div>
+        <button class="nav-btn" id="nextBtn" title="Next Slide (Right Arrow)">▶</button>
+    </div>
+
+    <script>
+        /* ===========================================
+           SLIDE PRESENTATION CONTROLLER
+           =========================================== */
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.stage = document.getElementById('deckStage');
+                this.counter = document.getElementById('slideCounter');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.isEditing = false;
+
+                this.setupStageScale();
+                this.setupControls();
+                this.setupKeyboardNav();
+                this.setupInlineEditor();
+                this.showSlide(0);
+            }
+
+            setupStageScale() {
+                const scale = () => {
+                    const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+                    const x = (window.innerWidth - 1920 * factor) / 2;
+                    const y = (window.innerHeight - 1080 * factor) / 2;
+                    this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+                };
+                scale();
+                window.addEventListener('resize', scale);
+            }
+
+            setupControls() {
+                this.prevBtn.addEventListener('click', () => this.prevSlide());
+                this.nextBtn.addEventListener('click', () => this.nextSlide());
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (this.isEditing) return;
+                    if (['ArrowRight', 'Space', 'PageDown', 'l', 'j'].includes(e.code) || e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.nextSlide();
+                    } else if (['ArrowLeft', 'PageUp', 'h', 'k'].includes(e.code) || e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.prevSlide();
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        this.showSlide(0);
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        this.showSlide(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupInlineEditor() {
+                const hotzone = document.querySelector('.edit-hotzone');
+                const editToggle = document.getElementById('editToggle');
+                let hideTimeout = null;
+
+                hotzone.addEventListener('mouseenter', () => {
+                    clearTimeout(hideTimeout);
+                    editToggle.classList.add('show');
+                });
+                hotzone.addEventListener('mouseleave', () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isEditing) editToggle.classList.remove('show');
+                    }, 400);
+                });
+                editToggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+                editToggle.addEventListener('mouseleave', () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isEditing) editToggle.classList.remove('show');
+                    }, 400);
+                });
+
+                const toggleEdit = () => {
+                    this.isEditing = !this.isEditing;
+                    editToggle.classList.toggle('active', this.isEditing);
+                    document.querySelectorAll('h1, h2, h3, h4, p, span, li, a, .col-desc, .cap-desc, .stat-sub').forEach(el => {
+                        if (!el.classList.contains('nav-btn') && !el.classList.contains('slide-counter')) {
+                            el.setAttribute('contenteditable', this.isEditing ? 'true' : 'false');
+                        }
+                    });
+                };
+
+                editToggle.addEventListener('click', toggleEdit);
+                hotzone.addEventListener('click', toggleEdit);
+
+                document.addEventListener('keydown', (e) => {
+                    if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) {
+                        toggleEdit();
+                    }
+                });
+            }
+
+            showSlide(index) {
+                this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+                this.slides.forEach((slide, i) => {
+                    const isActive = i === this.currentSlide;
+                    slide.classList.toggle('active', isActive);
+                    slide.classList.toggle('visible', isActive);
+                });
+                this.counter.textContent = `${this.currentSlide + 1} / ${this.slides.length}`;
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.slides.length - 1) {
+                    this.showSlide(this.currentSlide + 1);
+                }
+            }
+
+            prevSlide() {
+                if (this.currentSlide > 0) {
+                    this.showSlide(this.currentSlide - 1);
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            new SlidePresentation();
+        });
+    </script>
+</body>
+</html>
