@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: alpday6-slides
+    runtime: static
+    buildCommand: cp presentation.html index.html
+    staticPublishPath: .
+    envVars:
+      - key: SKIP_INSTALL_DEPS
+        value: "true"
